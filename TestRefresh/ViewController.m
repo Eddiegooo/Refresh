@@ -53,7 +53,7 @@
     }
     
     CGFloat offsetY = scrollView.contentOffset.y;
-    if (offsetY < 0 && offsetY > -200) { //往上推的过程
+    if (offsetY < 0 && offsetY > -200) { //往上推的过程 但是还没有完全推出头部高
         [self.topView mas_updateConstraints:^(MASConstraintMaker *make) {
             make.top.mas_equalTo(-offsetY -200 );
         }];
@@ -100,13 +100,13 @@
         _tableView = [[UITableView alloc] init];        _tableView.delegate = self;
         _tableView.dataSource = self;
         [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
-        _tableView.contentInset = UIEdgeInsetsMake(200, 0, 0, 0);
-        _tableView.scrollIndicatorInsets = UIEdgeInsetsMake(200, 0, 0, 0);
+        //顶部高度虽然是200 但是要减去状态栏的20高，，所以offset高为180
+        _tableView.contentInset = UIEdgeInsetsMake(180, 0, 0, 0);
+        _tableView.scrollIndicatorInsets = UIEdgeInsetsMake(180, 0, 0, 0);
         MJWeakSelf;
         _tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
             weakSelf.count = 15;
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1), dispatch_get_main_queue()
-            , ^{
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1), dispatch_get_main_queue(), ^{
                 [_tableView.mj_header endRefreshing];
             });
             [weakSelf.tableView reloadData];
